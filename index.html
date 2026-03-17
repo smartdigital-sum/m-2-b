@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Green Valley Public School</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <div class="logo-emblem"><i class="fas fa-graduation-cap"></i></div>
+          <div class="logo-text">
+            <span class="logo-name">Green Valley</span>
+            <span class="logo-sub">Public School</span>
+          </div>
+        </div>
+        <div class="hamburger" id="hamburger">
+          <span></span><span></span><span></span>
+        </div>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="#home" class="nav-link">Home</a></li>
+          <li><a href="#notices" class="nav-link">Notices</a></li>
+          <li><a href="#classes" class="nav-link">Classes</a></li>
+          <li><a href="#results" class="nav-link">Results</a></li>
+          <li><a href="#events" class="nav-link">Events</a></li>
+          <li><a href="#gallery" class="nav-link">Gallery</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="tel:+919876543210" class="btn-nav-call"
+            ><i class="fas fa-phone"></i> Call</a
+          >
+          <button class="btn-admin-nav" onclick="openAdminLogin()">
+            <i class="fas fa-lock"></i> Admin
+          </button>
+        </div>
+      </div>
+    </nav>
+    <div id="google_translate_element" style="display: none"></div>
+
+    <!-- ===== URGENT BANNER ===== -->
+    <div class="urgent-banner" id="urgentBanner" style="display: none">
+      <div class="urgent-inner">
+        <div class="urgent-pulse-icon"><i class="fas fa-bullhorn"></i></div>
+        <div class="urgent-body">
+          <span class="urgent-label">IMPORTANT NOTICE</span>
+          <span id="urgentNoticeText">Notice text here</span>
+        </div>
+        <div class="urgent-timer-box">
+          <i class="fas fa-hourglass-half"></i>
+          <span id="urgentCountdown">Loading...</span>
+        </div>
+        <button
+          class="urgent-close"
+          onclick="
+            document.getElementById('urgentBanner').style.display = 'none'
+          "
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="home">
+      <div class="hero-bg-pattern"></div>
+      <div class="hero-particles" id="heroParticles"></div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot"></span> Est. 1995 · Affiliated to CBSE
+        </div>
+        <h1 class="hero-title">
+          Green Valley<br /><span class="hero-title-gold">Public School</span>
+        </h1>
+        <p class="hero-tagline">Shaping Minds, Building Futures</p>
+        <p class="hero-desc">
+          A premier institution committed to academic excellence, character
+          development, and holistic education for students from Class I to Class
+          X.
+        </p>
+        <div class="hero-btns">
+          <button class="btn btn-gold" onclick="scrollTo('results')">
+            <i class="fas fa-search"></i> Check Results
+          </button>
+          <button class="btn btn-outline" onclick="scrollTo('classes')">
+            <i class="fas fa-book-open"></i> View Classes
+          </button>
+          <button class="btn btn-outline" onclick="scrollTo('notices')">
+            <i class="fas fa-bell"></i> Notices
+          </button>
+        </div>
+      </div>
+
+      <!-- School Status Card -->
+      <div class="school-status-card" id="schoolStatusCard">
+        <div class="status-glow" id="statusGlow"></div>
+        <div class="status-top">
+          <div class="status-icon-box" id="statusIconBox">
+            <i class="fas fa-school"></i>
+          </div>
+          <div class="status-info">
+            <span class="status-badge" id="schoolStatusBadge">OPEN</span>
+            <span class="status-title" id="schoolStatusText"
+              >School is Open</span
+            >
+          </div>
+        </div>
+        <div class="status-hours-row">
+          <div class="status-hour-item">
+            <i class="fas fa-sun"></i>
+            <div>
+              <span class="sh-label">Starts</span
+              ><span class="sh-time" id="schoolOpenTime">9:00 AM</span>
+            </div>
+          </div>
+          <div class="status-divider"></div>
+          <div class="status-hour-item">
+            <i class="fas fa-moon"></i>
+            <div>
+              <span class="sh-label">Ends</span
+              ><span class="sh-time" id="schoolCloseTime">4:00 PM</span>
+            </div>
+          </div>
+        </div>
+        <div class="status-countdown-row">
+          <i class="fas fa-clock"></i>
+          <span id="schoolCountdown">Calculating...</span>
+        </div>
+        <div class="status-live-clock" id="liveClock">--:--:--</div>
+        <div class="status-date" id="liveDate">--</div>
+      </div>
+    </section>
+
+    <!-- ===== STATS ===== -->
+    <section class="stats-bar">
+      <div class="stats-inner">
+        <div class="stat-item">
+          <span class="stat-num" data-target="1200">0</span
+          ><span class="stat-lbl">Students</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="68">0</span
+          ><span class="stat-lbl">Teachers</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="10">0</span
+          ><span class="stat-lbl">Classes</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="98">0</span
+          ><span class="stat-lbl">Pass Rate %</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="29">0</span
+          ><span class="stat-lbl">Years of Excellence</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ADMIN LOGIN MODAL ===== -->
+    <div class="modal" id="adminLoginModal">
+      <div class="modal-box login-box">
+        <button class="modal-close" onclick="closeAdminLogin()">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="login-icon"><i class="fas fa-shield-alt"></i></div>
+        <h2>Admin Portal</h2>
+        <p>Authorized personnel only</p>
+        <div class="form-field">
+          <input
+            type="email"
+            id="adminEmailInput"
+            placeholder="Admin email address"
+            onkeypress="if (event.key === 'Enter') verifyAdmin();"
+          />
+        </div>
+        <div class="form-field">
+          <input
+            type="password"
+            id="adminPasswordInput"
+            placeholder="Enter admin password"
+            onkeypress="if (event.key === 'Enter') verifyAdmin();"
+          />
+        </div>
+        <button class="btn btn-gold full-btn" onclick="verifyAdmin()">
+          <i class="fas fa-unlock"></i> Login
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== ADMIN PANEL MODAL ===== -->
+    <div class="modal" id="adminModal">
+      <div class="modal-box admin-box">
+        <button class="modal-close" onclick="closeAdmin()">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="admin-header-bar">
+          <i class="fas fa-tools"></i>
+          <h2>Admin Control Panel</h2>
+          <button class="btn-logout" onclick="adminLogout()" title="Logout">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+        <!-- Tabs -->
+        <div class="admin-tabs">
+          <button class="atab active" onclick="switchTab(this, 'tab-notices')">
+            <i class="fas fa-bell"></i> Notices
+          </button>
+          <button class="atab" onclick="switchTab(this, 'tab-results')">
+            <i class="fas fa-trophy"></i> Results
+          </button>
+          <button class="atab" onclick="switchTab(this, 'tab-events')">
+            <i class="fas fa-calendar"></i> Events
+          </button>
+          <button class="atab" onclick="switchTab(this, 'tab-settings')">
+            <i class="fas fa-cog"></i> Settings
+          </button>
+        </div>
+
+        <!-- TAB: NOTICES -->
+        <div class="tab-panel active" id="tab-notices">
+          <div class="admin-sec">
+            <h3><i class="fas fa-bell"></i> Notice Board Management</h3>
+            <div id="adminNoticesList" class="admin-list"></div>
+            <div class="admin-add-row">
+              <select id="noticeType">
+                <option value="info">📢 Announcement</option>
+                <option value="warning">⚠️ Warning</option>
+                <option value="success">✅ Good News</option>
+                <option value="exam">📝 Exam Notice</option>
+                <option value="holiday">🎉 Holiday</option>
+              </select>
+              <input
+                type="text"
+                id="noticeText"
+                placeholder="Type notice message..."
+              />
+              <button class="btn btn-gold" onclick="addNotice()">
+                <i class="fas fa-plus"></i> Add
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: RESULTS -->
+        <div class="tab-panel" id="tab-results">
+          <div class="admin-sec">
+            <h3><i class="fas fa-plus-circle"></i> Add Student Result</h3>
+            <div class="result-form-grid">
+              <div class="form-field">
+                <label>Class</label>
+                <select id="rClass" onchange="loadSubjectFields()">
+                  <option value="">-- Select Class --</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Section</label>
+                <select id="rSection">
+                  <option>A</option>
+                  <option>B</option>
+                  <option>C</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Roll Number</label>
+                <input type="text" id="rRoll" placeholder="e.g. 101" />
+              </div>
+              <div class="form-field">
+                <label>Student Name</label>
+                <input type="text" id="rName" placeholder="Full name" />
+              </div>
+              <div class="form-field">
+                <label>Father's Name</label>
+                <input type="text" id="rFather" placeholder="Father's name" />
+              </div>
+              <div class="form-field">
+                <label>Examination</label>
+                <select id="rExam">
+                  <option>Unit Test 1</option>
+                  <option>Unit Test 2</option>
+                  <option>Unit Test 3</option>
+                  <option>Term 1</option>
+                  <option>Term 2</option>
+                  <option>Final Exam</option>
+                </select>
+              </div>
+            </div>
+            <div id="subjectFieldsWrap">
+              <p class="hint-text">
+                <i class="fas fa-info-circle"></i> Select a class to enter marks
+              </p>
+            </div>
+            <button
+              class="btn btn-gold"
+              onclick="saveResult()"
+              style="margin-top: 14px"
+            >
+              <i class="fas fa-save"></i> Save Result
+            </button>
+          </div>
+          <div class="admin-sec">
+            <h3><i class="fas fa-list"></i> Saved Results</h3>
+            <div class="results-filter-row">
+              <select id="filterResultClass" onchange="renderAdminResults()">
+                <option value="">All Classes</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+                <option>9</option>
+                <option>10</option>
+              </select>
+              <select id="filterResultExam" onchange="renderAdminResults()">
+                <option value="">All Exams</option>
+                <option>Unit Test 1</option>
+                <option>Unit Test 2</option>
+                <option>Unit Test 3</option>
+                <option>Term 1</option>
+                <option>Term 2</option>
+                <option>Final Exam</option>
+              </select>
+            </div>
+            <div id="adminResultsList" class="admin-list"></div>
+          </div>
+        </div>
+
+        <!-- TAB: EVENTS -->
+        <div class="tab-panel" id="tab-events">
+          <div class="admin-sec">
+            <h3><i class="fas fa-calendar-plus"></i> Add Upcoming Event</h3>
+            <div class="result-form-grid">
+              <div class="form-field">
+                <label>Event Title</label>
+                <input
+                  type="text"
+                  id="evTitle"
+                  placeholder="e.g. Annual Sports Day"
+                />
+              </div>
+              <div class="form-field">
+                <label>Event Date</label>
+                <input type="date" id="evDate" />
+              </div>
+              <div class="form-field">
+                <label>Type</label>
+                <select id="evType">
+                  <option value="exam">📝 Exam</option>
+                  <option value="sports">🏆 Sports</option>
+                  <option value="cultural">🎭 Cultural</option>
+                  <option value="holiday">🎉 Holiday</option>
+                  <option value="meeting">👨‍👩‍👧 Parent Meeting</option>
+                  <option value="other">📌 Other</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>For Classes</label>
+                <input
+                  type="text"
+                  id="evClasses"
+                  placeholder="e.g. All / Class 9-10"
+                />
+              </div>
+            </div>
+            <div class="form-field">
+              <label>Description</label>
+              <textarea
+                id="evDesc"
+                placeholder="Brief description..."
+                rows="2"
+              ></textarea>
+            </div>
+            <button class="btn btn-gold" onclick="addEvent()">
+              <i class="fas fa-plus"></i> Add Event
+            </button>
+          </div>
+          <div class="admin-sec">
+            <h3><i class="fas fa-list"></i> Current Events</h3>
+            <div id="adminEventsList" class="admin-list"></div>
+          </div>
+        </div>
+
+        <!-- TAB: SETTINGS -->
+        <div class="tab-panel" id="tab-settings">
+          <div class="admin-sec">
+            <h3><i class="fas fa-school"></i> School Hours</h3>
+            <div class="result-form-grid">
+              <div class="form-field">
+                <label><i class="fas fa-sun"></i> School Opens</label>
+                <input type="time" id="schoolOpenInput" value="09:00" />
+              </div>
+              <div class="form-field">
+                <label><i class="fas fa-moon"></i> School Closes</label>
+                <input type="time" id="schoolCloseInput" value="16:00" />
+              </div>
+            </div>
+          </div>
+          <div class="admin-sec">
+            <h3>
+              <i class="fas fa-exclamation-triangle"></i> Urgent Notice Banner
+            </h3>
+            <div class="form-field">
+              <label>Notice Text</label>
+              <textarea
+                id="urgentText"
+                placeholder="Enter urgent notice..."
+                rows="3"
+              ></textarea>
+            </div>
+            <div class="form-field">
+              <label>Deadline</label>
+              <input type="datetime-local" id="urgentDeadline" />
+            </div>
+            <div class="toggle-wrap">
+              <label class="toggle-label">
+                <input type="checkbox" id="urgentShow" class="toggle-cb" />
+                <span class="toggle-track"></span>
+                Show Urgent Banner
+              </label>
+            </div>
+          </div>
+          <div class="admin-actions">
+            <button class="btn btn-gold" onclick="saveSettings()">
+              <i class="fas fa-save"></i> Save All Settings
+            </button>
+            <button class="btn btn-outline-dark" onclick="closeAdmin()">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== NOTICE BOARD ===== -->
+    <section class="notices-section" id="notices">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">
+            <span class="live-dot"></span> LIVE BOARD
+          </div>
+          <h2 class="section-title">Notice Board</h2>
+          <p class="section-sub">
+            Stay updated with the latest school announcements
+          </p>
+        </div>
+        <div class="notice-board">
+          <div class="board-top">
+            <div class="board-top-left">
+              <i class="fas fa-broadcast-tower"></i> Green Valley Public School
+              — Official Notice Board
+            </div>
+            <div class="board-top-right" id="boardTime">--</div>
+          </div>
+          <div class="ticker-bar">
+            <span class="ticker-label"
+              ><i class="fas fa-bullhorn"></i> LATEST</span
+            >
+            <div class="ticker-track">
+              <span id="tickerText">Loading notices...</span>
+            </div>
+          </div>
+          <div class="notices-grid" id="noticesDisplay">
+            <div class="board-empty" id="noticesEmpty">
+              <i class="fas fa-bell-slash"></i>
+              <p>No notices posted yet</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CLASSES ===== -->
+    <section class="classes-section" id="classes">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">ACADEMICS</div>
+          <h2 class="section-title">Our Classes</h2>
+          <p class="section-sub">
+            Class I to Class X — Strong foundation at every level
+          </p>
+        </div>
+        <div class="classes-grid" id="classesGrid">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Class Detail Modal -->
+    <div class="modal" id="classModal">
+      <div class="modal-box class-modal-box">
+        <button class="modal-close" onclick="closeClassModal()">
+          <i class="fas fa-times"></i>
+        </button>
+        <div id="classModalContent"></div>
+      </div>
+    </div>
+
+    <!-- ===== RESULTS ===== -->
+    <section class="results-section" id="results">
+      <div class="results-bg-pattern"></div>
+      <div class="container">
+        <div class="section-header light">
+          <div class="section-label">ACADEMICS</div>
+          <h2 class="section-title white">Check Your Result</h2>
+          <p class="section-sub white">
+            Enter your details to view your marks and grade
+          </p>
+        </div>
+        <div class="results-wrapper">
+          <!-- Search Panel -->
+          <div class="results-search-panel">
+            <div class="search-panel-header">
+              <i class="fas fa-search"></i> Find Result
+            </div>
+            <div class="form-field">
+              <label>Select Class</label>
+              <select id="searchClass">
+                <option value="">-- Select Class --</option>
+                <option value="1">Class 1</option>
+                <option value="2">Class 2</option>
+                <option value="3">Class 3</option>
+                <option value="4">Class 4</option>
+                <option value="5">Class 5</option>
+                <option value="6">Class 6</option>
+                <option value="7">Class 7</option>
+                <option value="8">Class 8</option>
+                <option value="9">Class 9</option>
+                <option value="10">Class 10</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Roll Number</label>
+              <input type="text" id="searchRoll" placeholder="e.g. 101" />
+            </div>
+            <div class="form-field">
+              <label>Examination</label>
+              <select id="searchExam">
+                <option value="">Any Exam</option>
+                <option>Unit Test 1</option>
+                <option>Unit Test 2</option>
+                <option>Unit Test 3</option>
+                <option>Term 1</option>
+                <option>Term 2</option>
+                <option>Final Exam</option>
+              </select>
+            </div>
+            <button class="btn btn-gold full-btn" onclick="searchResult()">
+              <i class="fas fa-search"></i> Find Result
+            </button>
+            <div class="search-tip">
+              <i class="fas fa-info-circle"></i> Enter your class and roll
+              number to find your result
+            </div>
+          </div>
+
+          <!-- Result Display -->
+          <div class="result-display-panel" id="resultDisplay">
+            <div class="result-placeholder" id="resultPlaceholder">
+              <div class="placeholder-icon"><i class="fas fa-trophy"></i></div>
+              <h3>Your Result Will Appear Here</h3>
+              <p>Search using your class and roll number</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== EVENTS ===== -->
+    <section class="events-section" id="events">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">UPCOMING</div>
+          <h2 class="section-title">Events & Activities</h2>
+          <p class="section-sub">
+            Stay informed about what's happening at school
+          </p>
+        </div>
+        <div class="events-grid" id="eventsDisplay">
+          <div class="events-empty" id="eventsEmpty">
+            <i class="fas fa-calendar-times"></i>
+            <p>No upcoming events at the moment</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== GALLERY ===== -->
+    <section class="gallery-section" id="gallery">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">MEMORIES</div>
+          <h2 class="section-title">School Gallery</h2>
+          <p class="section-sub">Moments that define our school spirit</p>
+        </div>
+        <div class="filter-row">
+          <button class="fbtn active" onclick="filterGallery('all', this)">
+            All
+          </button>
+          <button class="fbtn" onclick="filterGallery('events', this)">
+            Events
+          </button>
+          <button class="fbtn" onclick="filterGallery('sports', this)">
+            Sports
+          </button>
+          <button class="fbtn" onclick="filterGallery('academics', this)">
+            Academics
+          </button>
+        </div>
+        <div class="gallery-grid">
+          <div class="g-item" data-cat="events" onclick="openLightbox(this)">
+            <img
+              src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=280&fit=crop"
+              alt="School Event"
+            />
+            <div class="g-overlay"><i class="fas fa-expand"></i></div>
+          </div>
+          <div class="g-item" data-cat="sports" onclick="openLightbox(this)">
+            <img
+              src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=280&fit=crop"
+              alt="Sports"
+            />
+            <div class="g-overlay"><i class="fas fa-expand"></i></div>
+          </div>
+          <div class="g-item" data-cat="academics" onclick="openLightbox(this)">
+            <img
+              src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&h=280&fit=crop"
+              alt="Classroom"
+            />
+            <div class="g-overlay"><i class="fas fa-expand"></i></div>
+          </div>
+          <div class="g-item" data-cat="events" onclick="openLightbox(this)">
+            <img
+              src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=280&fit=crop"
+              alt="Annual Day"
+            />
+            <div class="g-overlay"><i class="fas fa-expand"></i></div>
+          </div>
+          <div class="g-item" data-cat="sports" onclick="openLightbox(this)">
+            <img
+              src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&h=280&fit=crop"
+              alt="Athletics"
+            />
+            <div class="g-overlay"><i class="fas fa-expand"></i></div>
+          </div>
+          <div class="g-item" data-cat="academics" onclick="openLightbox(this)">
+            <img
+              src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&h=280&fit=crop"
+              alt="Science Lab"
+            />
+            <div class="g-overlay"><i class="fas fa-expand"></i></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+      <span class="lb-close">&times;</span>
+      <img class="lb-img" src="" alt="" />
+      <div class="lb-nav">
+        <button onclick="prevImg(event)">&#10094;</button>
+        <button onclick="nextImg(event)">&#10095;</button>
+      </div>
+    </div>
+
+    <!-- ===== CONTACT ===== -->
+    <section class="contact-section" id="contact">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">REACH US</div>
+          <h2 class="section-title">Contact Us</h2>
+          <p class="section-sub">We'd love to hear from parents and students</p>
+        </div>
+        <div class="contact-wrapper">
+          <div class="contact-info-grid">
+            <div class="contact-card">
+              <i class="fas fa-map-marker-alt"></i>
+              <h4>Address</h4>
+              <p>Green Valley Road, Silchar<br />Assam - 788001, India</p>
+            </div>
+            <div class="contact-card">
+              <i class="fas fa-phone-alt"></i>
+              <h4>Phone</h4>
+              <p>
+                <a href="tel:+919876543210">+91 98765 43210</a><br /><a
+                  href="tel:+913842222333"
+                  >03842-222-333</a
+                >
+              </p>
+            </div>
+            <div class="contact-card">
+              <i class="fas fa-envelope"></i>
+              <h4>Email</h4>
+              <p>
+                <a
+                  href="/cdn-cgi/l/email-protection#167f787079567160666538737263387f78"
+                  ><span
+                    class="__cf_email__"
+                    data-cfemail="91f8fff7fed1f6e7e1e2bff4f5e4bff8ff"
+                    >[email&#160;protected]</span
+                  ></a
+                ><br /><a
+                  href="/cdn-cgi/l/email-protection#b2c2c0dbdcd1dbc2d3def2d5c4c2c19cd7d6c79cdbdc"
+                  ><span
+                    class="__cf_email__"
+                    data-cfemail="8ffffde6e1ece6ffeee3cfe8f9fffca1eaebfaa1e6e1"
+                    >[email&#160;protected]</span
+                  ></a
+                >
+              </p>
+            </div>
+            <div class="contact-card">
+              <i class="fas fa-clock"></i>
+              <h4>School Hours</h4>
+              <p>
+                Mon–Sat: 9:00 AM – 4:00 PM<br />Office: 8:00 AM – 5:00 PM<br />Sunday:
+                Closed
+              </p>
+            </div>
+          </div>
+          <div class="contact-form-card">
+            <h3>Send a Message</h3>
+            <form onsubmit="handleContact(event)">
+              <div class="form-field">
+                <input type="text" placeholder="Your Name" required />
+              </div>
+              <div class="form-field">
+                <input
+                  type="text"
+                  placeholder="Student's Name & Class"
+                  required
+                />
+              </div>
+              <div class="form-field">
+                <input type="email" placeholder="Email Address" required />
+              </div>
+              <div class="form-field">
+                <input type="tel" placeholder="Phone Number" />
+              </div>
+              <div class="form-field">
+                <textarea
+                  placeholder="Your Message"
+                  rows="4"
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" class="btn btn-gold full-btn">
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+        <div class="map-box">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3647.5!2d92.79!3d24.82!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjTCsDQ5JzEyLjAiTiA5MsKwNDcnMjQuMCJF!5e0!3m2!1sen!2sin!4v1234567890"
+            width="100%"
+            height="350"
+            style="border: 0"
+            allowfullscreen
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+      <div class="footer-top">
+        <div class="container">
+          <div class="footer-grid">
+            <div class="footer-col">
+              <div class="footer-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Green Valley Public School</span>
+              </div>
+              <p>
+                Committed to excellence in education since 1995. Shaping young
+                minds and building the leaders of tomorrow through holistic
+                learning.
+              </p>
+              <div class="footer-social">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+              </div>
+            </div>
+            <div class="footer-col">
+              <h4>Quick Links</h4>
+              <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#notices">Notice Board</a></li>
+                <li><a href="#classes">Classes</a></li>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#contact">Contact</a></li>
+              </ul>
+            </div>
+            <div class="footer-col">
+              <h4>Classes Offered</h4>
+              <ul>
+                <li><a href="#">Class I – II (Primary)</a></li>
+                <li><a href="#">Class III – V (Junior)</a></li>
+                <li><a href="#">Class VI – VIII (Middle)</a></li>
+                <li><a href="#">Class IX – X (Secondary)</a></li>
+              </ul>
+            </div>
+            <div class="footer-col">
+              <h4>Facilities</h4>
+              <ul>
+                <li><a href="#">Science Laboratory</a></li>
+                <li><a href="#">Computer Lab</a></li>
+                <li><a href="#">Library</a></li>
+                <li><a href="#">Sports Ground</a></li>
+                <li><a href="#">Smart Classrooms</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p>
+            &copy; <span id="footerYear"></span> Green Valley Public School,
+            Silchar, Assam. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
