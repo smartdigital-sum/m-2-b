@@ -3,29 +3,11 @@
 // ===================================================================
 
 // ===================================================================
-//  FIREBASE CONFIGURATION
+//  FIREBASE CONFIGURATION (Compat SDK - Global)
 // ===================================================================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {
-  getFirestore,
-  collection,
-  doc,
-  addDoc,
-  setDoc,
-  deleteDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  orderBy,
-  serverTimestamp,
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// NOTE: Firebase API keys are client-side safe, but ensure Firestore security rules
+// restrict access appropriately. See: https://firebase.google.com/docs/rules
 const firebaseConfig = {
   apiKey: "AIzaSyAHHfY81gd5ouT8Y1hZlyh_aU3IKfoKEhQ",
   authDomain: "school-demo-b7e31.firebaseapp.com",
@@ -36,9 +18,9 @@ const firebaseConfig = {
   measurementId: "G-20ZSKVJ62K",
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
 // ===================================================================
 //  CONSTANTS
@@ -241,7 +223,7 @@ function showToast(msg, type = "success") {
 
 let currentAdmin = null;
 
-onAuthStateChanged(auth, (user) => {
+auth.onAuthStateChanged((user) => {
   currentAdmin = user;
   // Update admin button appearance
   const btn = document.querySelector(".btn-admin-nav");
@@ -286,7 +268,7 @@ async function verifyAdmin() {
   btn.disabled = true;
 
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    await auth.signInWithEmailAndPassword(email, password);
     closeAdminLogin();
     openAdminPanel();
     showToast("✅ Welcome, Admin!");
@@ -307,7 +289,7 @@ async function verifyAdmin() {
 }
 
 async function adminLogout() {
-  await signOut(auth);
+  await auth.signOut();
   closeAdmin();
   showToast("👋 Logged out successfully", "info");
 }
@@ -360,7 +342,7 @@ async function saveSettings() {
   };
 
   try {
-    await setDoc(doc(db, "settings", "school"), { hours, urgent });
+    await db.collection("settings").doc("school").set({ hours, urgent });
     showToast("✅ Settings saved successfully!");
     closeAdmin();
   } catch (e) {
@@ -373,45 +355,55 @@ async function saveSettings() {
 // ===================================================================
 
 function startFirestoreListeners() {
+  const adminModal = document.getElementById("adminModal");
+  const isAdminOpen = () => adminModal && adminModal.style.display === "flex";
+
   // --- NOTICES ---
-  onSnapshot(
-    query(collection(db, "notices"), orderBy("timestamp", "desc")),
-    (snap) => {
-      _notices = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-      renderNoticeBoard();
-      if (document.getElementById("adminModal").style.display === "flex")
-        renderAdminNotices();
-    },
-  );
+  db.collection("notices")
+    .orderBy("timestamp", "desc")
+    .onSnapshot(
+      (snap) => {
+        _notices = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        renderNoticeBoard();
+        if (isAdminOpen()) renderAdminNotices();
+      },
+      (err) => console.error("Notices listener error:", err),
+    );
 
   // --- RESULTS ---
-  onSnapshot(collection(db, "results"), (snap) => {
-    _results = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    if (document.getElementById("adminModal").style.display === "flex")
-      renderAdminResults();
-  });
-
-  // --- EVENTS ---
-  onSnapshot(
-    query(collection(db, "events"), orderBy("date", "asc")),
+  db.collection("results").onSnapshot(
     (snap) => {
-      _events = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-      renderEvents();
-      if (document.getElementById("adminModal").style.display === "flex")
-        renderAdminEvents();
+      _results = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      if (isAdminOpen()) renderAdminResults();
     },
+    (err) => console.error("Results listener error:", err),
   );
 
+  // --- EVENTS ---
+  db.collection("events")
+    .orderBy("date", "asc")
+    .onSnapshot(
+      (snap) => {
+        _events = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        renderEvents();
+        if (isAdminOpen()) renderAdminEvents();
+      },
+      (err) => console.error("Events listener error:", err),
+    );
+
   // --- SETTINGS ---
-  onSnapshot(doc(db, "settings", "school"), (snap) => {
-    if (snap.exists()) {
-      const data = snap.data();
-      _settings = data.hours || { opening: "09:00", closing: "16:00" };
-      _urgent = data.urgent || {};
-      updateSchoolStatus();
-      updateUrgentBanner();
-    }
-  });
+  db.collection("settings").doc("school").onSnapshot(
+    (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        _settings = data.hours || { opening: "09:00", closing: "16:00" };
+        _urgent = data.urgent || {};
+        updateSchoolStatus();
+        updateUrgentBanner();
+      }
+    },
+    (err) => console.error("Settings listener error:", err),
+  );
 }
 
 // ===================================================================
@@ -431,10 +423,10 @@ async function addNotice() {
   }
 
   try {
-    await addDoc(collection(db, "notices"), {
+    await db.collection("notices").add({
       text,
       type,
-      timestamp: serverTimestamp(),
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
     document.getElementById("noticeText").value = "";
     showToast("📢 Notice posted!");
@@ -446,7 +438,7 @@ async function addNotice() {
 async function deleteNotice(id) {
   if (!currentAdmin) return;
   try {
-    await deleteDoc(doc(db, "notices", id));
+    await db.collection("notices").doc(id).delete();
     showToast("🗑️ Notice deleted", "info");
   } catch (e) {
     showToast("❌ Error: " + e.message, "error");
@@ -555,7 +547,8 @@ async function saveResult() {
   let valid = true;
   subjects.forEach((s) => {
     const id = `mark_${s.replace(/\s+/g, "_")}`;
-    const val = parseInt(document.getElementById(id)?.value);
+    const inputEl = document.getElementById(id);
+    const val = inputEl ? parseInt(inputEl.value) : NaN;
     if (isNaN(val) || val < 0 || val > 100) {
       valid = false;
       return;
@@ -580,11 +573,11 @@ async function saveResult() {
     fatherName: father,
     exam,
     marks,
-    timestamp: serverTimestamp(),
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
   };
 
   try {
-    await setDoc(doc(db, "results", docId), entry);
+    await db.collection("results").doc(docId).set(entry);
     showToast(`✅ Result saved for ${name} (Class ${cls})`);
     document.getElementById("rRoll").value = "";
     document.getElementById("rName").value = "";
@@ -600,7 +593,7 @@ async function saveResult() {
 async function deleteResult(id) {
   if (!currentAdmin) return;
   try {
-    await deleteDoc(doc(db, "results", id));
+    await db.collection("results").doc(id).delete();
     showToast("🗑️ Result deleted", "info");
   } catch (e) {
     showToast("❌ Error: " + e.message, "error");
@@ -818,13 +811,13 @@ async function addEvent() {
   }
 
   try {
-    await addDoc(collection(db, "events"), {
+    await db.collection("events").add({
       title,
       date,
       type,
       classes: classes || "All",
       desc,
-      timestamp: serverTimestamp(),
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
     document.getElementById("evTitle").value = "";
     document.getElementById("evDate").value = "";
@@ -839,7 +832,7 @@ async function addEvent() {
 async function deleteEvent(id) {
   if (!currentAdmin) return;
   try {
-    await deleteDoc(doc(db, "events", id));
+    await db.collection("events").doc(id).delete();
     showToast("🗑️ Event deleted", "info");
   } catch (e) {
     showToast("❌ Error: " + e.message, "error");
@@ -1038,28 +1031,30 @@ function updateSchoolStatus() {
   const glow = document.getElementById("statusGlow");
   const iconBox = document.getElementById("statusIconBox");
 
+  if (!badge || !text || !card) return;
+
   if (isWeekend) {
     badge.textContent = "HOLIDAY";
     badge.className = "status-badge closed";
     text.textContent = "School is Closed (Weekend)";
     card.className = "school-status-card is-closed";
-    glow.className = "status-glow glow-closed";
-    iconBox.className = "status-icon-box icon-closed";
+    if (glow) glow.className = "status-glow glow-closed";
+    if (iconBox) iconBox.className = "status-icon-box icon-closed";
   } else if (isOpen) {
     badge.textContent = "OPEN";
     badge.className = "status-badge open";
     text.textContent = "School is Open";
     card.className = "school-status-card is-open";
-    glow.className = "status-glow glow-open";
-    iconBox.className = "status-icon-box icon-open";
+    if (glow) glow.className = "status-glow glow-open";
+    if (iconBox) iconBox.className = "status-icon-box icon-open";
   } else {
     badge.textContent = "CLOSED";
     badge.className = "status-badge closed";
     text.textContent =
       cur < open ? "School Not Started Yet" : "School Hours Over";
     card.className = "school-status-card is-closed";
-    glow.className = "status-glow glow-closed";
-    iconBox.className = "status-icon-box icon-closed";
+    if (glow) glow.className = "status-glow glow-closed";
+    if (iconBox) iconBox.className = "status-icon-box icon-closed";
   }
 }
 
@@ -1097,7 +1092,8 @@ function updateUrgentBanner() {
   const banner = document.getElementById("urgentBanner");
   if (urg.show && urg.text) {
     banner.style.display = "flex";
-    document.getElementById("urgentNoticeText").textContent = urg.text;
+    const noticeText = document.getElementById("urgentNoticeText");
+    if (noticeText) noticeText.textContent = urg.text;
     updateUrgentCountdown();
   } else {
     banner.style.display = "none";
@@ -1167,31 +1163,41 @@ function filterGallery(cat, btn) {
 function openLightbox(el) {
   const visible = Array.from(document.querySelectorAll(".g-item:not(.hidden)"));
   lightboxIdx = visible.indexOf(el);
-  lightboxImgs = visible.map((i) => i.querySelector("img").src);
-  document.querySelector(".lb-img").src = lightboxImgs[lightboxIdx];
-  document.getElementById("lightbox").style.display = "flex";
-  document.body.style.overflow = "hidden";
+  lightboxImgs = visible.map((i) => i.querySelector("img")?.src).filter(Boolean);
+  const lbImg = document.querySelector(".lb-img");
+  const lightbox = document.getElementById("lightbox");
+  if (lbImg && lightbox && lightboxImgs.length > 0) {
+    lbImg.src = lightboxImgs[lightboxIdx];
+    lightbox.style.display = "flex";
+    document.body.style.overflow = "hidden";
+  }
 }
 
 function closeLightbox() {
-  document.getElementById("lightbox").style.display = "none";
+  const lightbox = document.getElementById("lightbox");
+  if (lightbox) lightbox.style.display = "none";
   document.body.style.overflow = "";
 }
 
 function nextImg(e) {
   e.stopPropagation();
+  if (lightboxImgs.length === 0) return;
   lightboxIdx = (lightboxIdx + 1) % lightboxImgs.length;
-  document.querySelector(".lb-img").src = lightboxImgs[lightboxIdx];
+  const lbImg = document.querySelector(".lb-img");
+  if (lbImg) lbImg.src = lightboxImgs[lightboxIdx];
 }
 
 function prevImg(e) {
   e.stopPropagation();
+  if (lightboxImgs.length === 0) return;
   lightboxIdx = (lightboxIdx - 1 + lightboxImgs.length) % lightboxImgs.length;
-  document.querySelector(".lb-img").src = lightboxImgs[lightboxIdx];
+  const lbImg = document.querySelector(".lb-img");
+  if (lbImg) lbImg.src = lightboxImgs[lightboxIdx];
 }
 
 document.addEventListener("keydown", (e) => {
-  if (document.getElementById("lightbox").style.display === "flex") {
+  const lightbox = document.getElementById("lightbox");
+  if (lightbox && lightbox.style.display === "flex") {
     if (e.key === "ArrowRight") nextImg(e);
     else if (e.key === "ArrowLeft") prevImg(e);
     else if (e.key === "Escape") closeLightbox();
@@ -1352,7 +1358,8 @@ function init() {
     updateSchoolStatus();
   }, 1000);
 
-  document.getElementById("footerYear").textContent = new Date().getFullYear();
+  const footerYear = document.getElementById("footerYear");
+  if (footerYear) footerYear.textContent = new Date().getFullYear();
   setTimeout(observeReveal, 300);
 }
 
@@ -1395,8 +1402,4 @@ window.closeLightbox = closeLightbox;
 window.nextImg = nextImg;
 window.prevImg = prevImg;
 window.handleContact = handleContact;
-// ===================================================================
-//  GOOGLE TRANSLATE (Lazy Loading)
-// ===================================================================
-
 window.scrollTo = scrollTo;

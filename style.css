@@ -183,35 +183,6 @@ body {
   border-color: transparent;
 }
 
-.btn-translate-nav {
-  background: transparent;
-  border: 1.5px solid rgba(59, 130, 246, 0.5);
-  color: var(--blue);
-  padding: 8px 16px;
-  border-radius: 25px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: relative;
-}
-
-.btn-translate-nav:hover {
-  background: rgba(59, 130, 246, 0.1);
-  border-color: var(--blue);
-}
-
-.btn-translate-nav.loading {
-  pointer-events: none;
-}
-
-.btn-translate-nav .loader {
-  font-size: 14px;
-}
-
 /* Comprehensive Google Translate UI Hiding */
 .goog-te-banner-frame,
 .goog-te-top-frame,
