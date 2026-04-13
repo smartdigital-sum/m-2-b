@@ -121,6 +121,24 @@ const CLASS_STRENGTHS = {
   10: 35,
 };
 const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+
+// Calendar state
+let calYear  = new Date().getFullYear();
+let calMonth = new Date().getMonth(); // 0-indexed
+
+const CAL_MONTHS = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
+];
+const CAL_DOT_COLORS = {
+  exam:     "#8b5cf6",
+  sports:   "#10b981",
+  cultural: "#ec4899",
+  holiday:  "#f59e0b",
+  meeting:  "#3b82f6",
+  other:    "#6b7280",
+};
+
 const EVENT_ICONS = {
   exam: "📝",
   sports: "🏆",
@@ -895,31 +913,155 @@ function renderEvents() {
   container.querySelectorAll(".event-card").forEach((c) => c.remove());
   if (!_events.length) {
     empty.style.display = "flex";
-    return;
+  } else {
+    empty.style.display = "none";
+    _events.forEach((e, i) => {
+      const card = document.createElement("div");
+      card.className = `event-card ev-${e.type}`;
+      card.style.animationDelay = `${i * 0.08}s`;
+      const du = daysUntil(e.date);
+      const isPast = du === "Passed";
+      card.innerHTML = `
+        <div class="ev-accent"></div>
+        <div class="ev-icon">${EVENT_ICONS[e.type] || "📌"}</div>
+        <div class="ev-body">
+          <div class="ev-top-row">
+            <span class="ev-type-tag ev-tag-${e.type}">${e.type.toUpperCase()}</span>
+            <span class="ev-countdown ${isPast ? "ev-past" : ""}">${du}</span>
+          </div>
+          <h4 class="ev-title">${e.title}</h4>
+          <div class="ev-date"><i class="fas fa-calendar-day"></i> ${formatDate(e.date)}</div>
+          ${e.desc ? `<p class="ev-desc">${e.desc}</p>` : ""}
+          <div class="ev-classes-tag"><i class="fas fa-users"></i> ${e.classes}</div>
+        </div>`;
+      container.appendChild(card);
+    });
+    setTimeout(observeReveal, 100);
   }
-  empty.style.display = "none";
-  _events.forEach((e, i) => {
-    const card = document.createElement("div");
-    card.className = `event-card ev-${e.type}`;
-    card.style.animationDelay = `${i * 0.08}s`;
-    const du = daysUntil(e.date);
-    const isPast = du === "Passed";
-    card.innerHTML = `
-      <div class="ev-accent"></div>
-      <div class="ev-icon">${EVENT_ICONS[e.type] || "📌"}</div>
-      <div class="ev-body">
-        <div class="ev-top-row">
-          <span class="ev-type-tag ev-tag-${e.type}">${e.type.toUpperCase()}</span>
-          <span class="ev-countdown ${isPast ? "ev-past" : ""}">${du}</span>
-        </div>
-        <h4 class="ev-title">${e.title}</h4>
-        <div class="ev-date"><i class="fas fa-calendar-day"></i> ${formatDate(e.date)}</div>
-        ${e.desc ? `<p class="ev-desc">${e.desc}</p>` : ""}
-        <div class="ev-classes-tag"><i class="fas fa-users"></i> ${e.classes}</div>
-      </div>`;
-    container.appendChild(card);
+  // Always refresh calendar whenever event list changes
+  renderCalendar();
+}
+
+// ===================================================================
+//  EVENTS CALENDAR VIEW
+// ===================================================================
+
+function switchEventsView(view) {
+  const calView  = document.getElementById("eventsCalendarView");
+  const listView = document.getElementById("eventsListView");
+  const calBtn   = document.getElementById("calViewBtn");
+  const listBtn  = document.getElementById("listViewBtn");
+  if (!calView || !listView) return;
+  if (view === "calendar") {
+    calView.style.display  = "block";
+    listView.style.display = "none";
+    calBtn.classList.add("active");
+    listBtn.classList.remove("active");
+    renderCalendar();
+  } else {
+    calView.style.display  = "none";
+    listView.style.display = "block";
+    calBtn.classList.remove("active");
+    listBtn.classList.add("active");
+  }
+}
+
+function calPrevMonth() {
+  calMonth--;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function calNextMonth() {
+  calMonth++;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const label = document.getElementById("calMonthLabel");
+  const grid  = document.getElementById("calGrid");
+  const panel = document.getElementById("calDayEvents");
+  if (!label || !grid) return;
+
+  label.textContent = `${CAL_MONTHS[calMonth]} ${calYear}`;
+  if (panel) { panel.style.display = "none"; panel.innerHTML = ""; }
+
+  // Build date → events map
+  const eventMap = {};
+  _events.forEach((e) => {
+    if (!eventMap[e.date]) eventMap[e.date] = [];
+    eventMap[e.date].push(e);
   });
-  setTimeout(observeReveal, 100);
+
+  const firstDay    = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const todayObj    = new Date();
+  const todayKey    = `${todayObj.getFullYear()}-${String(todayObj.getMonth() + 1).padStart(2, "0")}-${String(todayObj.getDate()).padStart(2, "0")}`;
+
+  let html = "";
+
+  // Blank leading cells
+  for (let i = 0; i < firstDay; i++) {
+    html += `<div class="cal-cell cal-cell-blank"></div>`;
+  }
+
+  // Day cells
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateKey   = `${calYear}-${String(calMonth + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    const dayEvents = eventMap[dateKey] || [];
+    const isToday   = dateKey === todayKey;
+    const hasEvents = dayEvents.length > 0;
+
+    const dots = dayEvents
+      .slice(0, 3)
+      .map((e) => `<span class="cal-dot" style="background:${CAL_DOT_COLORS[e.type] || "#6b7280"};"></span>`)
+      .join("");
+
+    html += `
+      <div class="cal-cell${isToday ? " cal-today" : ""}${hasEvents ? " cal-has-events" : ""}"
+           ${hasEvents ? `onclick="showCalDayEvents('${dateKey}')" tabindex="0" role="button" aria-label="Events on ${dateKey}"` : ""}>
+        <span class="cal-day-num">${d}</span>
+        ${dots ? `<div class="cal-dots">${dots}</div>` : ""}
+        ${dayEvents.length > 3 ? `<span class="cal-more">+${dayEvents.length - 3}</span>` : ""}
+      </div>`;
+  }
+
+  grid.innerHTML = html;
+}
+
+function showCalDayEvents(dateKey) {
+  const panel = document.getElementById("calDayEvents");
+  if (!panel) return;
+
+  const dayEvents = _events.filter((e) => e.date === dateKey);
+  if (!dayEvents.length) { panel.style.display = "none"; return; }
+
+  const dateLabel = new Date(dateKey + "T00:00:00").toLocaleDateString("en-IN", {
+    weekday: "long", day: "numeric", month: "long", year: "numeric",
+  });
+
+  panel.innerHTML = `
+    <div class="cal-day-header">
+      <i class="fas fa-calendar-day"></i> ${dateLabel}
+      <button onclick="document.getElementById('calDayEvents').style.display='none'" class="cal-close-btn" aria-label="Close">&times;</button>
+    </div>
+    ${dayEvents.map((e) => `
+      <div class="cal-ev-row">
+        <span class="cal-ev-dot" style="background:${CAL_DOT_COLORS[e.type] || "#6b7280"};"></span>
+        <div class="cal-ev-info">
+          <strong>${e.title}</strong>
+          ${e.desc ? `<p>${e.desc}</p>` : ""}
+          <div class="cal-ev-meta">
+            <span class="ev-type-tag ev-tag-${e.type}">${e.type.toUpperCase()}</span>
+            <span class="cal-ev-cls"><i class="fas fa-users"></i> ${e.classes}</span>
+          </div>
+        </div>
+      </div>
+    `).join("")}
+  `;
+  panel.style.display = "block";
+  panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 // ===================================================================
@@ -1424,6 +1566,10 @@ window.displayResultFromData = displayResultFromData;
 window.resetResultPanel = resetResultPanel;
 window.addEvent = addEvent;
 window.deleteEvent = deleteEvent;
+window.switchEventsView = switchEventsView;
+window.calPrevMonth = calPrevMonth;
+window.calNextMonth = calNextMonth;
+window.showCalDayEvents = showCalDayEvents;
 window.openClassModal = openClassModal;
 window.closeClassModal = closeClassModal;
 window.filterGallery = filterGallery;

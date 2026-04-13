@@ -603,10 +603,46 @@
             Stay informed about what's happening at school
           </p>
         </div>
-        <div class="events-grid" id="eventsDisplay">
-          <div class="events-empty" id="eventsEmpty">
-            <i class="fas fa-calendar-times"></i>
-            <p>No upcoming events at the moment</p>
+        <!-- View toggle -->
+        <div class="ev-view-toggle">
+          <button class="ev-vbtn active" id="calViewBtn" onclick="switchEventsView('calendar')">
+            <i class="fas fa-calendar-alt"></i> Calendar
+          </button>
+          <button class="ev-vbtn" id="listViewBtn" onclick="switchEventsView('list')">
+            <i class="fas fa-list"></i> List
+          </button>
+        </div>
+
+        <!-- Calendar View -->
+        <div id="eventsCalendarView">
+          <div class="cal-header">
+            <button class="cal-nav-btn" onclick="calPrevMonth()" aria-label="Previous month"><i class="fas fa-chevron-left"></i></button>
+            <span class="cal-month-label" id="calMonthLabel"></span>
+            <button class="cal-nav-btn" onclick="calNextMonth()" aria-label="Next month"><i class="fas fa-chevron-right"></i></button>
+          </div>
+          <div class="cal-weekdays">
+            <div>Sun</div><div>Mon</div><div>Tue</div>
+            <div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div class="cal-day-events" id="calDayEvents" style="display:none;"></div>
+          <div class="cal-legend">
+            <span class="cal-leg-item"><span class="cal-dot" style="background:#8b5cf6;"></span> Exam</span>
+            <span class="cal-leg-item"><span class="cal-dot" style="background:#10b981;"></span> Sports</span>
+            <span class="cal-leg-item"><span class="cal-dot" style="background:#ec4899;"></span> Cultural</span>
+            <span class="cal-leg-item"><span class="cal-dot" style="background:#f59e0b;"></span> Holiday</span>
+            <span class="cal-leg-item"><span class="cal-dot" style="background:#3b82f6;"></span> Meeting</span>
+            <span class="cal-leg-item"><span class="cal-dot" style="background:#6b7280;"></span> Other</span>
+          </div>
+        </div>
+
+        <!-- List View -->
+        <div id="eventsListView" style="display:none;">
+          <div class="events-grid" id="eventsDisplay">
+            <div class="events-empty" id="eventsEmpty">
+              <i class="fas fa-calendar-times"></i>
+              <p>No upcoming events at the moment</p>
+            </div>
           </div>
         </div>
       </div>
