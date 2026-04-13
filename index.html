@@ -34,6 +34,7 @@
           <li><a href="#classes" class="nav-link">Classes</a></li>
           <li><a href="#results" class="nav-link">Results</a></li>
           <li><a href="#events" class="nav-link">Events</a></li>
+          <li><a href="#fees" class="nav-link">Fees</a></li>
           <li><a href="#gallery" class="nav-link">Gallery</a></li>
           <li><a href="#contact" class="nav-link">Contact</a></li>
         </ul>
@@ -41,6 +42,9 @@
           <a href="tel:+919876543210" class="btn-nav-call"
             ><i class="fas fa-phone"></i> Call</a
           >
+          <button class="btn-dark-toggle" id="darkToggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+            <i class="fas fa-moon" id="darkToggleIcon"></i>
+          </button>
           <button class="btn-admin-nav" onclick="openAdminLogin()">
             <i class="fas fa-lock"></i> Admin
           </button>
@@ -608,6 +612,88 @@
       </div>
     </section>
 
+    <!-- ===== FEE STRUCTURE ===== -->
+    <section class="fees-section" id="fees">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">FINANCES</div>
+          <h2 class="section-title">Fee Structure</h2>
+          <p class="section-sub">Academic Year 2024–25 · Transparent & affordable education</p>
+        </div>
+        <div class="fees-grid">
+          <!-- Primary -->
+          <div class="fee-card fc-primary">
+            <div class="fc-header">
+              <div class="fc-icon"><i class="fas fa-seedling"></i></div>
+              <div>
+                <h3>Primary</h3>
+                <span class="fc-classes">Class I – V</span>
+              </div>
+            </div>
+            <table class="fee-table">
+              <tr><td>Admission Fee <span class="fc-note">(one-time)</span></td><td>₹2,500</td></tr>
+              <tr><td>Tuition Fee <span class="fc-note">(per month)</span></td><td>₹1,200</td></tr>
+              <tr><td>Annual Development</td><td>₹1,800</td></tr>
+              <tr><td>Computer Lab</td><td>₹600</td></tr>
+              <tr><td>Library</td><td>₹400</td></tr>
+            </table>
+            <div class="fc-total">
+              <span>Annual Approx.</span>
+              <strong>₹18,700</strong>
+            </div>
+          </div>
+          <!-- Middle -->
+          <div class="fee-card fc-middle">
+            <div class="fc-header">
+              <div class="fc-icon"><i class="fas fa-leaf"></i></div>
+              <div>
+                <h3>Middle</h3>
+                <span class="fc-classes">Class VI – VIII</span>
+              </div>
+            </div>
+            <table class="fee-table">
+              <tr><td>Admission Fee <span class="fc-note">(one-time)</span></td><td>₹3,000</td></tr>
+              <tr><td>Tuition Fee <span class="fc-note">(per month)</span></td><td>₹1,500</td></tr>
+              <tr><td>Annual Development</td><td>₹2,200</td></tr>
+              <tr><td>Computer Lab</td><td>₹800</td></tr>
+              <tr><td>Library</td><td>₹500</td></tr>
+            </table>
+            <div class="fc-total">
+              <span>Annual Approx.</span>
+              <strong>₹24,500</strong>
+            </div>
+          </div>
+          <!-- Secondary -->
+          <div class="fee-card fc-secondary">
+            <div class="fc-header">
+              <div class="fc-icon"><i class="fas fa-graduation-cap"></i></div>
+              <div>
+                <h3>Secondary</h3>
+                <span class="fc-classes">Class IX – X</span>
+              </div>
+            </div>
+            <table class="fee-table">
+              <tr><td>Admission Fee <span class="fc-note">(one-time)</span></td><td>₹3,500</td></tr>
+              <tr><td>Tuition Fee <span class="fc-note">(per month)</span></td><td>₹1,800</td></tr>
+              <tr><td>Annual Development</td><td>₹2,800</td></tr>
+              <tr><td>Computer Lab</td><td>₹1,000</td></tr>
+              <tr><td>Science Lab</td><td>₹1,200</td></tr>
+              <tr><td>Library</td><td>₹600</td></tr>
+            </table>
+            <div class="fc-total">
+              <span>Annual Approx.</span>
+              <strong>₹31,700</strong>
+            </div>
+          </div>
+        </div>
+        <div class="fees-note-box">
+          <i class="fas fa-info-circle"></i>
+          Fees are payable quarterly. Admission fee is charged once at enrollment. For scholarships &amp; concessions, contact the school office.
+          <a href="#contact" class="fees-contact-link">Contact Us <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </section>
+
     <!-- ===== GALLERY ===== -->
     <section class="gallery-section" id="gallery">
       <div class="container">
@@ -817,6 +903,7 @@
                 <li><a href="#classes">Classes</a></li>
                 <li><a href="#results">Results</a></li>
                 <li><a href="#events">Events</a></li>
+                <li><a href="#fees">Fee Structure</a></li>
                 <li><a href="#contact">Contact</a></li>
               </ul>
             </div>
@@ -851,6 +938,12 @@
         </div>
       </div>
     </footer>
+
+    <!-- ===== WHATSAPP FAB ===== -->
+    <a href="https://wa.me/919876543210?text=Hello%20Green%20Valley%20Public%20School%2C%20I%20have%20an%20enquiry." target="_blank" rel="noopener" class="whatsapp-fab" title="Chat on WhatsApp">
+      <i class="fab fa-whatsapp"></i>
+      <span class="wa-tooltip">Chat on WhatsApp</span>
+    </a>
 
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>

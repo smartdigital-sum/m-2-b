@@ -145,6 +145,34 @@ let _settings = { opening: "09:00", closing: "16:00" };
 let _urgent = {};
 
 // ===================================================================
+//  DARK MODE
+// ===================================================================
+
+function toggleDarkMode() {
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  setDarkMode(!isDark);
+}
+
+function setDarkMode(dark) {
+  if (dark) {
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("gvps_theme", "dark");
+    const icon = document.getElementById("darkToggleIcon");
+    if (icon) { icon.className = "fas fa-sun"; }
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+    localStorage.setItem("gvps_theme", "light");
+    const icon = document.getElementById("darkToggleIcon");
+    if (icon) { icon.className = "fas fa-moon"; }
+  }
+}
+
+function initDarkMode() {
+  const saved = localStorage.getItem("gvps_theme");
+  if (saved === "dark") setDarkMode(true);
+}
+
+// ===================================================================
 //  HELPERS
 // ===================================================================
 
@@ -1344,6 +1372,7 @@ function createParticles() {
 // ===================================================================
 
 function init() {
+  initDarkMode();
   renderClasses();
   updateSchoolStatus();
   updateUrgentBanner();
@@ -1375,6 +1404,7 @@ console.log(
 // ===================================================================
 //  EXPOSE FUNCTIONS TO GLOBAL SCOPE (required for type="module")
 // ===================================================================
+window.toggleDarkMode = toggleDarkMode;
 window.openAdminLogin = openAdminLogin;
 window.closeAdminLogin = closeAdminLogin;
 window.verifyAdmin = verifyAdmin;
