@@ -263,6 +263,23 @@ function showToast(msg, type = "success") {
   }, 3500);
 }
 
+// Disable a button and show a loading label while an async op runs.
+// Prevents double-submits and gives the user immediate feedback.
+async function withBusy(btn, loadingLabel, fn) {
+  if (!btn) return fn();
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.classList.add("is-busy");
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${loadingLabel}`;
+  try {
+    return await fn();
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove("is-busy");
+    btn.innerHTML = original;
+  }
+}
+
 // ===================================================================
 //  FIREBASE AUTH — ADMIN LOGIN
 // ===================================================================
@@ -376,7 +393,7 @@ function switchTab(btn, panelId) {
   document.getElementById(panelId).classList.add("active");
 }
 
-async function saveSettings() {
+async function saveSettings(ev) {
   const hours = {
     opening: document.getElementById("schoolOpenInput").value || "09:00",
     closing: document.getElementById("schoolCloseInput").value || "16:00",
@@ -387,13 +404,15 @@ async function saveSettings() {
     show: document.getElementById("urgentShow").checked,
   };
 
-  try {
-    await db.collection("settings").doc("school").set({ hours, urgent });
-    showToast("✅ Settings saved successfully!");
-    closeAdmin();
-  } catch (e) {
-    showToast("❌ Error saving settings: " + e.message, "error");
-  }
+  await withBusy(ev?.currentTarget, "Saving...", async () => {
+    try {
+      await db.collection("settings").doc("school").set({ hours, urgent });
+      showToast("✅ Settings saved successfully!");
+      closeAdmin();
+    } catch (e) {
+      showToast("❌ Error saving settings: " + e.message, "error");
+    }
+  });
 }
 
 // ===================================================================
@@ -456,7 +475,7 @@ function startFirestoreListeners() {
 //  NOTICES
 // ===================================================================
 
-async function addNotice() {
+async function addNotice(ev) {
   if (!currentAdmin) {
     showToast("⚠️ Not logged in", "warning");
     return;
@@ -468,17 +487,19 @@ async function addNotice() {
     return;
   }
 
-  try {
-    await db.collection("notices").add({
-      text,
-      type,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-    document.getElementById("noticeText").value = "";
-    showToast("📢 Notice posted!");
-  } catch (e) {
-    showToast("❌ Error: " + e.message, "error");
-  }
+  await withBusy(ev?.currentTarget, "Posting...", async () => {
+    try {
+      await db.collection("notices").add({
+        text,
+        type,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      document.getElementById("noticeText").value = "";
+      showToast("📢 Notice posted!");
+    } catch (e) {
+      showToast("❌ Error: " + e.message, "error");
+    }
+  });
 }
 
 async function deleteNotice(id) {
@@ -571,7 +592,7 @@ function loadSubjectFields() {
     </div>`;
 }
 
-async function saveResult() {
+async function saveResult(ev) {
   if (!currentAdmin) {
     showToast("⚠️ Not logged in", "warning");
     return;
@@ -622,18 +643,20 @@ async function saveResult() {
     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
   };
 
-  try {
-    await db.collection("results").doc(docId).set(entry);
-    showToast(`✅ Result saved for ${name} (Class ${cls})`);
-    document.getElementById("rRoll").value = "";
-    document.getElementById("rName").value = "";
-    document.getElementById("rFather").value = "";
-    document.getElementById("subjectFieldsWrap").innerHTML =
-      '<p class="hint-text"><i class="fas fa-info-circle"></i> Select a class to enter marks</p>';
-    document.getElementById("rClass").value = "";
-  } catch (e) {
-    showToast("❌ Error: " + e.message, "error");
-  }
+  await withBusy(ev?.currentTarget, "Saving...", async () => {
+    try {
+      await db.collection("results").doc(docId).set(entry);
+      showToast(`✅ Result saved for ${name} (Class ${cls})`);
+      document.getElementById("rRoll").value = "";
+      document.getElementById("rName").value = "";
+      document.getElementById("rFather").value = "";
+      document.getElementById("subjectFieldsWrap").innerHTML =
+        '<p class="hint-text"><i class="fas fa-info-circle"></i> Select a class to enter marks</p>';
+      document.getElementById("rClass").value = "";
+    } catch (e) {
+      showToast("❌ Error: " + e.message, "error");
+    }
+  });
 }
 
 async function deleteResult(id) {
@@ -840,7 +863,7 @@ function resetResultPanel() {
 //  EVENTS
 // ===================================================================
 
-async function addEvent() {
+async function addEvent(ev) {
   if (!currentAdmin) {
     showToast("⚠️ Not logged in", "warning");
     return;
@@ -856,23 +879,25 @@ async function addEvent() {
     return;
   }
 
-  try {
-    await db.collection("events").add({
-      title,
-      date,
-      type,
-      classes: classes || "All",
-      desc,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-    document.getElementById("evTitle").value = "";
-    document.getElementById("evDate").value = "";
-    document.getElementById("evClasses").value = "";
-    document.getElementById("evDesc").value = "";
-    showToast("🎉 Event added!");
-  } catch (e) {
-    showToast("❌ Error: " + e.message, "error");
-  }
+  await withBusy(ev?.currentTarget, "Adding...", async () => {
+    try {
+      await db.collection("events").add({
+        title,
+        date,
+        type,
+        classes: classes || "All",
+        desc,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      document.getElementById("evTitle").value = "";
+      document.getElementById("evDate").value = "";
+      document.getElementById("evClasses").value = "";
+      document.getElementById("evDesc").value = "";
+      showToast("🎉 Event added!");
+    } catch (e) {
+      showToast("❌ Error: " + e.message, "error");
+    }
+  });
 }
 
 async function deleteEvent(id) {
@@ -1379,6 +1404,14 @@ document.addEventListener("keydown", (e) => {
         document.body.style.overflow = "";
       }
     });
+  }
+  // Calendar cells: activate on Enter/Space when focused via keyboard.
+  if (e.key === "Enter" || e.key === " ") {
+    const cell = e.target.closest?.(".cal-cell.cal-has-events");
+    if (cell) {
+      e.preventDefault();
+      cell.click();
+    }
   }
 });
 

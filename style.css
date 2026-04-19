@@ -56,6 +56,28 @@ body {
   padding: 0 24px;
 }
 
+/* Keyboard-only focus ring — visible outline for users tabbing through,
+   invisible for mouse clicks. */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+.nav-link:focus-visible,
+.fbtn:focus-visible,
+.atab:focus-visible,
+.ev-vbtn:focus-visible {
+  outline: 2px solid var(--gold2);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Busy state for action buttons during async saves */
+button.is-busy,
+button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* ===================================================================
    NAVBAR
    =================================================================== */

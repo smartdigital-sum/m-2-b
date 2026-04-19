@@ -250,7 +250,7 @@
                 id="noticeText"
                 placeholder="Type notice message..."
               />
-              <button class="btn btn-gold" onclick="addNotice()">
+              <button class="btn btn-gold" onclick="addNotice(event)">
                 <i class="fas fa-plus"></i> Add
               </button>
             </div>
@@ -317,7 +317,7 @@
             </div>
             <button
               class="btn btn-gold"
-              onclick="saveResult()"
+              onclick="saveResult(event)"
               style="margin-top: 14px"
             >
               <i class="fas fa-save"></i> Save Result
@@ -398,7 +398,7 @@
                 rows="2"
               ></textarea>
             </div>
-            <button class="btn btn-gold" onclick="addEvent()">
+            <button class="btn btn-gold" onclick="addEvent(event)">
               <i class="fas fa-plus"></i> Add Event
             </button>
           </div>
@@ -448,7 +448,7 @@
             </div>
           </div>
           <div class="admin-actions">
-            <button class="btn btn-gold" onclick="saveSettings()">
+            <button class="btn btn-gold" onclick="saveSettings(event)">
               <i class="fas fa-save"></i> Save All Settings
             </button>
             <button class="btn btn-outline-dark" onclick="closeAdmin()">
@@ -757,6 +757,8 @@
             <img
               src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=280&fit=crop"
               alt="School Event"
+              loading="lazy"
+              decoding="async"
             />
             <div class="g-overlay"><i class="fas fa-expand"></i></div>
           </div>
@@ -764,6 +766,8 @@
             <img
               src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=280&fit=crop"
               alt="Sports"
+              loading="lazy"
+              decoding="async"
             />
             <div class="g-overlay"><i class="fas fa-expand"></i></div>
           </div>
@@ -771,6 +775,8 @@
             <img
               src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&h=280&fit=crop"
               alt="Classroom"
+              loading="lazy"
+              decoding="async"
             />
             <div class="g-overlay"><i class="fas fa-expand"></i></div>
           </div>
@@ -778,6 +784,8 @@
             <img
               src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=280&fit=crop"
               alt="Annual Day"
+              loading="lazy"
+              decoding="async"
             />
             <div class="g-overlay"><i class="fas fa-expand"></i></div>
           </div>
@@ -785,6 +793,8 @@
             <img
               src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&h=280&fit=crop"
               alt="Athletics"
+              loading="lazy"
+              decoding="async"
             />
             <div class="g-overlay"><i class="fas fa-expand"></i></div>
           </div>
@@ -792,6 +802,8 @@
             <img
               src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&h=280&fit=crop"
               alt="Science Lab"
+              loading="lazy"
+              decoding="async"
             />
             <div class="g-overlay"><i class="fas fa-expand"></i></div>
           </div>
